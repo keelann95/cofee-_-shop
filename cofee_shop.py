@@ -25,14 +25,45 @@ class Customer:
     def create_order(self, coffee, price):
         return Order(self, coffee, price)
 
-    @classmethod
-    def most_aficionado(cls, coffee):
-        aficionado = None
-        max_spent = 0
-        for customer in cls.all_customers:
-            total_spent = sum(order.price for order in customer.orders() if order.coffee == coffee)
-            if total_spent > max_spent:
-                max_spent = total_spent
-                aficionado = customer
-        return aficionado
- 
+class Coffee:
+    def __init__(self, name):
+        if not isinstance(name, str):
+            raise TypeError("Name must be a string.")
+        if len(name) < 3:
+            raise ValueError("Coffee name must be at least 3 characters long.")
+        self._name = name
+
+    @property
+    def name(self):
+        return self._name
+
+    def num_orders(self):
+        return len(self.orders())
+
+class Order:
+    all_orders = []  
+
+    def __init__(self, customer, coffee, price):
+        if not isinstance(customer, Customer):
+            raise TypeError("Customer must be an instance of Customer.")
+        if not isinstance(coffee, Coffee):
+            raise TypeError("Coffee must be an instance of Coffee.")
+        if not isinstance(price, float) or not (1.0 <= price <= 10.0):
+            raise ValueError("Price must be a float between 1.0 and 10.0.")
+
+        self._customer = customer
+        self._coffee = coffee
+        self._price = price
+        Order.all_orders.append(self)
+
+    @property
+    def customer(self):
+        return self._customer
+
+    @property
+    def coffee(self):
+        return self._coffee
+
+    @property
+    def price(self):
+        return self._price
